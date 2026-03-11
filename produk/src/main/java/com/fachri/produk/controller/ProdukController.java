@@ -33,7 +33,7 @@ public class ProdukController {
     }
 
     @PostMapping
-    public Produk creatProduk(@RequestBody Produk produk){
+    public Produk createProduk(@RequestBody Produk produk){
         return produkService.createProduk(produk);
     }
 
