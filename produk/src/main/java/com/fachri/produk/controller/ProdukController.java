@@ -22,24 +22,30 @@ public class ProdukController {
     private ProdukService produkService;
 
     @GetMapping
-    public List<Produk> getAllProduks(){
+    public List<Produk> getAllProduks() {
         return produkService.getAllProduks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produk> getProdukById(@PathVariable Long id){
+    public ResponseEntity<Produk> getProdukById(@PathVariable Long id) {
         Produk produk = produkService.getProdukById(id);
         return produk != null ? ResponseEntity.ok(produk) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public Produk createProduk(@RequestBody Produk produk){
+    public Produk createProduk(@RequestBody Produk produk) {
         return produkService.createProduk(produk);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduk(@PathVariable Long id){
+    public ResponseEntity<?> deleteProduk(@PathVariable Long id) {
         produkService.deleteProduk(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<?> deleteAll() {
+        produkService.deleteAll();
         return ResponseEntity.ok().build();
     }
 }

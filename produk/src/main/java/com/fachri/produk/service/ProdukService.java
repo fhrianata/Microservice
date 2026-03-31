@@ -28,4 +28,8 @@ public class ProdukService {
     public void deleteProduk(Long id){
         produkRepository.deleteById(id);
     }
+
+    public void deleteAll() {
+    produkRepository.deleteAll();
+    }
 }

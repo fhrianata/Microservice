@@ -38,7 +38,6 @@ public class OrderService {
 
     @Transactional
     public void update(Long orderId, Integer jumlah, String tanggal, String status) {
-        // Auto generated method s
         Order order = orderRepository.findById(orderId).orElseThrow(()
                 -> new IllegalStateException("Order tidak ada"));
         if (jumlah != null) {
@@ -55,13 +54,21 @@ public class OrderService {
 
     public List<ResponseTemplate> getOrderWithProdukById(Long id){
         List<ResponseTemplate> resoponseList = new ArrayList<>();
-        Order order = getOrderById(id);
+
+        Order order = orderRepository.findById(id)
+            .orElseThrow(() -> new IllegalStateException("Order tidak ditemukan"));
+
         ServiceInstance serviceInstance = discoveryClient.getInstances("PRODUK").get(0);
-        Produk produk = restTemplate.getForObject(serviceInstance.getUri() + "/api/produk/"
-                + order.getProdukId(), Produk.class);
+
+        Produk produk = restTemplate.getForObject(
+            serviceInstance.getUri() + "/api/produk/" + order.getProdukId(),
+            Produk.class
+        );
+
         ResponseTemplate vo = new ResponseTemplate();
         vo.setOrder(order);
         vo.setProduk(produk);
+
         resoponseList.add(vo);
         return resoponseList;
     }
