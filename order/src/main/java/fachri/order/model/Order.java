@@ -9,15 +9,12 @@ import lombok.Data;
 @Data
 @Entity(name = "orders")
 public class Order {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    private Long id;
-    private Long idProduk;
-    private Long idPelanggan;
-    private double harga;
+    private long id;
+    private long produkId;
     private int jumlah;
     private double total;
+    private String tanggal;
 
 }
