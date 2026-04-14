@@ -1,26 +1,41 @@
 package com.fachri.consumer;
 
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
 @Service
 public class ConsumerService {
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private Queue queue;
+    private JavaMailSender mailSender;
 
-    @RabbitListener(queues = "myQueue")
+    @RabbitListener(queues = "orderQueue")
     public void receivedMessage(String message) {
-        System.out.println("Received: " + message);
-    }
 
-    public void sendMessage(String message) {
-        rabbitTemplate.convertAndSend(queue.getName(), message);
-        System.out.println("Sent: " + message);
+        System.out.println("Received: " + message);
+
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo("ervan@pnp.ac.id");
+        mail.setSubject("Order Berhasil");
+        String emailText = "Halo,\n\n" +
+                "Pesanan Anda telah berhasil diproses.\n\n" +
+                "Detail Pesanan:\n" +
+                "---------------------------\n" +
+                message + "\n" +
+                "---------------------------\n\n" +
+                "Terima kasih telah berbelanja.\n" +
+                "Salam,\n" +
+                "Tim Sistem Order";
+
+        mail.setText(emailText);
+
+
+        mailSender.send(mail);
+
+        System.out.println("Email terkirim!");
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,8 @@ import fachri.order.vo.ResponseTemplate;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
+import fachri.order.security.JwtUtil;
+import io.jsonwebtoken.Claims;
 
 @RestController
 @RequestMapping("/api/order")
@@ -28,25 +30,42 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping
-    public List<Order> getAll(){
+    public List<Order> getAll() {
         return orderService.getAll();
     }
 
     @PostMapping
-    public Order createOrder(@RequestBody Order order){
-        return orderService.createOrder(order);
+    public Order createOrder(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Order order) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Token tidak ada");
+        }
+
+        String token = authHeader.substring(7);
+
+        Claims claims = JwtUtil.validateToken(token);
+
+        String username = claims.getSubject();
+        String role = claims.get("role", String.class);
+
+        System.out.println("User: " + username);
+        System.out.println("Role: " + role);
+
+        return orderService.createOrder(order, token);
     }
 
     @GetMapping(path = "{id}")
     public Order getOrderById(@PathVariable("id") Long id) {
         return orderService.getOrderById(id);
     }
-    
+
     @GetMapping(path = "/produk/{id}")
     public List<ResponseTemplate> getOrderWithProdukById(@PathVariable("id") Long id) {
         return orderService.getOrderWithProdukById(id);
     }
-    
+
     @PutMapping(path = "/{id}")
     public void updateOrder(@PathVariable("id") Long id,
             @RequestParam(required = false) int jumlah,
@@ -54,12 +73,11 @@ public class OrderController {
             @RequestParam(required = false) String status) {
         orderService.update(id, jumlah, tanggal, status);
     }
-    
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOrder(@PathVariable long id){
+    public ResponseEntity<?> deleteOrder(@PathVariable long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.ok().build();
     }
-    
+
 }
