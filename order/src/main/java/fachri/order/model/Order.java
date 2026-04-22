@@ -16,5 +16,7 @@ public class Order {
     private int jumlah;
     private double total;
     private String tanggal;
+    private String createdBy;
+    private String role;
 
 }

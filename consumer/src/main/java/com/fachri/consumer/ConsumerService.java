@@ -19,7 +19,7 @@ public class ConsumerService {
         System.out.println("Received: " + message);
 
         SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo("ervan@pnp.ac.id");
+        mail.setTo("fachrianata123@gmail.com");
         mail.setSubject("Order Berhasil");
         String emailText = "Halo,\n\n" +
                 "Pesanan Anda telah berhasil diproses.\n\n" +

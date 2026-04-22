@@ -36,24 +36,30 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public Order createOrder(Order order, String token) {
-        
+    public Order createOrder(Order order, String username, String role) {
+
+        order.setCreatedBy(username);
+        order.setRole(role);
+
         Order saved = orderRepository.save(order);
 
         String message = "Order ID: " + saved.getId() +
-                ", Total Belanja: " + saved.getTotal()+
-                ", Token: " + token;
+                ", Total: " + saved.getTotal() +
+                ", User: " + username +
+                ", Role: " + role;
 
         rabbitTemplate.convertAndSend("orderQueue", message);
 
-        System.out.println("KIRIM KE RABBITMQ: " + message);
+        System.out.println("ORDER OLEH: " + username + " (" + role + ")");
 
         return saved;
     }
 
     @Transactional
     public void update(Long orderId, Integer jumlah, String tanggal, String status) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalStateException("Order tidak ada"));
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalStateException("Order tidak ada"));
+
         if (jumlah != null) {
             order.setJumlah(jumlah);
         }
