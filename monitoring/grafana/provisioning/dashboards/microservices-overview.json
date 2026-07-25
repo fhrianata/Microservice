@@ -1,0 +1,192 @@
+{
+  "title": "Microservices PBL - Overview",
+  "uid": "microservices-pbl-overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Service Up/Down",
+      "type": "stat",
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "up{job=~\"eureka|api-gateway|authservice|produk|pelanggan|order|produser|consumer\"}",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "JVM Heap Used (per service)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{area=\"heap\"}",
+          "legendFormat": "{{job}} - {{id}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "HTTP Request Rate (per service)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "targets": [
+        {
+          "expr": "sum by (job) (rate(http_server_requests_seconds_count[1m]))",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "HTTP 5xx Error Rate",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "targets": [
+        {
+          "expr": "sum by (job) (rate(http_server_requests_seconds_count{status=~\"5..\"}[1m]))",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "CPU Usage (per service)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "targets": [
+        {
+          "expr": "process_cpu_usage",
+          "legendFormat": "{{job}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Produk & Pelanggan Dibuat (per menit)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "targets": [
+        {
+          "expr": "rate(microservices_produk_dibuat_total[1m])",
+          "legendFormat": "Produk baru"
+        },
+        {
+          "expr": "rate(microservices_pelanggan_dibuat_total[1m])",
+          "legendFormat": "Pelanggan baru"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Order Dibuat per Role (per menit)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "targets": [
+        {
+          "expr": "sum by (role) (rate(microservices_order_dibuat_total[1m]))",
+          "legendFormat": "{{role}}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Alur Pesan RabbitMQ: Terkirim vs Diterima vs Email Terkirim",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 30
+      },
+      "targets": [
+        {
+          "expr": "rate(microservices_pesan_terkirim_total[1m])",
+          "legendFormat": "Terkirim (Producer)"
+        },
+        {
+          "expr": "rate(microservices_pesan_diterima_total[1m])",
+          "legendFormat": "Diterima (Consumer)"
+        },
+        {
+          "expr": "rate(microservices_email_terkirim_total[1m])",
+          "legendFormat": "Email Terkirim"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Login Auth: Sukses vs Gagal (per menit)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 30
+      },
+      "targets": [
+        {
+          "expr": "sum by (hasil) (rate(microservices_auth_login_total[1m]))",
+          "legendFormat": "{{hasil}}"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Total Order Tersimpan per Role",
+      "type": "piechart",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 38
+      },
+      "targets": [
+        {
+          "expr": "sum by (role) (microservices_order_dibuat_total)",
+          "legendFormat": "{{role}}"
+        }
+      ]
+    }
+  ]
+}

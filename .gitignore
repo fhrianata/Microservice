@@ -1,0 +1,13 @@
+# Jangan commit kredensial asli
+.env
+
+# Build artifacts tiap service (dibuat ulang otomatis oleh Docker multi-stage build)
+**/target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store

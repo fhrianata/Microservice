@@ -1,0 +1,73 @@
+global:
+  scrape_interval: 15s        # tiap 15 detik, Prometheus "narik" data dari tiap service
+  evaluation_interval: 15s
+
+# CATATAN:
+# Sekarang SEMUA service (eureka, gateway-service, authservice, produk,
+# pelanggan, order, produser, consumer) berjalan di dalam Docker, di
+# jaringan Compose yang sama dengan Prometheus. Jadi Prometheus memanggil
+# tiap service lewat NAMA SERVICE docker-compose-nya langsung (mis.
+# "authservice:8086"), bukan lewat host.docker.internal / localhost lagi.
+# Docker Compose otomatis menyediakan DNS internal untuk nama-nama ini.
+scrape_configs:
+
+  # Prometheus memonitor dirinya sendiri juga
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'eureka'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['eureka:8761']
+        labels:
+          service: 'eureka'
+
+  - job_name: 'api-gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['gateway-service:9000']
+        labels:
+          service: 'gateway-service'
+
+  - job_name: 'authservice'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['authservice:8086']
+        labels:
+          service: 'authservice'
+
+  - job_name: 'produk'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['produk:8081']
+        labels:
+          service: 'produk'
+
+  - job_name: 'pelanggan'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['pelanggan:8082']
+        labels:
+          service: 'pelanggan'
+
+  - job_name: 'order'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['order:8083']
+        labels:
+          service: 'order'
+
+  - job_name: 'produser'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['produser:8080']
+        labels:
+          service: 'produser'
+
+  - job_name: 'consumer'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['consumer:8085']
+        labels:
+          service: 'consumer'
